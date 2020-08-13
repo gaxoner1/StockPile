@@ -6,7 +6,6 @@ require('dotenv').config();
 const keys = {
   stockKey: process.env.REACT_APP_API_KEY,
 };
-console.log(`apikey is: ${keys.stockKey}`)
 
 class Stocks extends React.Component {
   constructor(props) {
@@ -37,35 +36,59 @@ class Stocks extends React.Component {
     this.stockQuery(userQuery)
   }
 
+  saveArrayState = (price) => {
+    let tempArry = []
+
+    for (var val in price) {
+      tempArry.push(price[val])
+    }
+      console.log (`tmp array :${tempArry}`)
+      console.log (`tempArry type: ${typeof ((tempArry))}`)
+    this.setState({
+      stockPlotY: [tempArry]
+    })
+    console.log (`price passed to state type: ${typeof (this.state.stockPlotY)}`)
+  }
+
   stockQuery = async query => {
     try {
       const startDate = this.prevHundred();
       const endDate = Date.now()
       console.log(startDate)
+      console.log(endDate)
       let response = await fetch(
         `https://finnhub.io/api/v1/stock/candle?symbol=${query}&resolution=D&from=${startDate}&to=${endDate}&token=${keys.stockKey}`,
         { mode: "cors" }
       );
       let stockJson = await response.json(); //return API
-      let stockData = JSON.stringify(stockJson); //to json string
+      console.log(`stockJSON dot c: ${typeof (stockJson.c)}`)
+      //let stockData = JSON.stringify(stockJson); //to json string
       //this.saveResult(stockData)
       //push historic data to state
       //console.log(stockData)
-      let stockPrice = JSON.parse(stockData).c //to Json Obj
-      let priceDate = JSON.parse(stockData).t
-      console.log(stockPrice)
-      //this.saveResult(stockPrice)
-      this.setState ({
-        stockPlotX: stockPrice,
-        stockPlotY: priceDate
-      })
-      console.log(`price array state: ${this.state.stockPlotY}`)
+      let stockPrice = stockJson.c //c is close price from API call
+      let priceDate = stockJson.t //t is time from API call
+
+      this.saveArrayState(stockPrice)
+      // console.log(Object.values(stockPrice))
+      // //this.saveResult(stockPrice)
+      // this.setState ({
+      //   stockPlotX: Object.values(stockPrice)(stockPrice),
+      //   stockPlotY: Object.values(priceDate)
+      // })
+      // console.log(`price array state: ${Object.values(stockPrice)}`)
+      // console.log(`price array type: ${typeof (Object.values(stockPrice))}`)
+      //
+      // console.log(`date array state: ${this.state.stockPlotY}`)
+      // console.log(`date array type: ${typeof this.state.stockPlotY}`)
+
     } catch (err) {
       console.log(`todo Handle Error- ${err}`)
     }
       console.log(`this was searched: ${query}`)
   }
 
+//NEED better way to get historic datagoing back in time UNIX stamps
   prevHundred = () => {
     const now = new Date() //returns UNIX timestamp for API call
     const startTimeStamp = now.setDate(now.getDate()-100);

@@ -6,16 +6,19 @@ class Chart extends React.Component {
     super(props);
     this.state = {
       chartData: {
-        labels: [props.prices],
+        labels: //[1,2,3,4],
+        [props.labels],
         datasets: [
           {
-            label: 'Rainfall',
+            label: 'Stock Name',
             fill: false,
-            lineTension: 0.5,
+            //lineTension: 0.5,
             backgroundColor: 'rgba(75,192,192,1)',
-            borderColor: 'rgba(0,0,0,1)',
-            borderWidth: 2,
-            data: [props.labels]
+            //borderColor: 'rgba(0,0,0,1)',
+            borderColor: "#3e95cd",
+            //borderWidth: 2,
+            data: //[20, 30, 40, 45, 60, 21, 12, 33]
+            [props.prices]
           }
         ]
       }
